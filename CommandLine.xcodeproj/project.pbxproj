@@ -136,7 +136,8 @@
 				5D449A17198B015E00F9A8A6 /* StringExtensions.swift */,
 				5D06884619674D7D00BBFAAC /* Supporting Files */,
 			);
-			path = CommandLine;
+			name = CommandLine;
+			path = Source/CommandLine;
 			sourceTree = "<group>";
 		};
 		5D06884619674D7D00BBFAAC /* Supporting Files */ = {
