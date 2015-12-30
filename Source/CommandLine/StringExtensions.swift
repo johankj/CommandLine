@@ -91,12 +91,12 @@ internal extension String {
     var numSplits = 0
 
     var curIdx = self.startIndex
-    for(var i = self.startIndex; i != self.endIndex; i = i.successor()) {
+    for i in self.startIndex..<self.endIndex {
       let c = self[i]
       if c == splitBy && (maxSplits == 0 || numSplits < maxSplits) {
         s.append(self[Range(start: curIdx, end: i)])
         curIdx = i.successor()
-        numSplits++
+        numSplits += 1
       }
     }
 
@@ -116,14 +116,8 @@ internal extension String {
    * - returns: A new string, padded to the given width.
    */
   func paddedToWidth(width: Int, padBy: Character = " ") -> String {
-    var s = self
-    var currentLength = self.characters.count
-
-    while currentLength++ < width {
-      s.append(padBy)
-    }
-
-    return s
+    let pad = max(0, width - self.characters.count)
+    return self + String(count: pad, repeatedValue: padBy)
   }
 
   /**

@@ -57,6 +57,7 @@ private struct StderrOutputStream: OutputStreamType {
 public class CommandLine {
   private var _arguments: [String]
   private var _options: [Option] = [Option]()
+  private var _positionals: [Positional] = [Positional]()
   private var _usedFlags: Set<String> {
     var usedFlags = Set<String>(minimumCapacity: _options.count * 2)
 
@@ -193,18 +194,88 @@ public class CommandLine {
   }
   
   /**
+   * Adds a Positional to the command line.
+   *
+   * - parameter positional: The positional to add.
+   */
+  public func addPositional(positional: Positional) {
+    _positionals.append(positional)
+  }
+  
+  /**
+   * Adds one or more Positionals to the command line.
+   *
+   * - parameter positionals: An array containing the positionals to add.
+   */
+  public func addPositionals(positionals: [Positional]) {
+    for o in positionals {
+      addPositional(o)
+    }
+  }
+  
+  /**
+   * Adds one or more Positionals to the command line.
+   *
+   * - parameter positionals: The positionals to add.
+   */
+  public func addPositionals(positionals: Positional...) {
+    for o in positionals {
+      addPositional(o)
+    }
+  }
+  
+  /**
+   * Sets the command line Positionals. Any existing positionals will be overwritten.
+   *
+   * - parameter positionals: An array containing the positionals to set.
+   */
+  public func setPositionals(positionals: [Positional]) {
+    _positionals = positionals
+  }
+  
+  /**
+   * Sets the command line Positionals. Any existing positionals will be overwritten.
+   *
+   * - parameter positionals: The positionals to set.
+   */
+  public func setPositionals(positionals: Positional...) {
+    _positionals = positionals
+  }
+  
+  /**
    * Parses command-line arguments into their matching Option values. Throws `ParseError` if
    * argument parsing fails.
    *
    * - parameter strict: Fail if any unrecognized arguments are present (default: false).
    */
   public func parse(strict: Bool = false) throws {
+    var parsedPositionals = 0
     for (idx, arg) in _arguments.enumerate() {
       if arg == ArgumentStopper {
         break
       }
       
       if !arg.hasPrefix(ShortOptionPrefix) {
+        if idx > 0 && parsedPositionals < _positionals.count {
+            let positional = _positionals[parsedPositionals]
+            switch positional.type {
+            case .Bool:
+                switch arg {
+                case "true": positional.value = true
+                case "false": positional.value = false
+                default: throw ParseError.InvalidArgument("Positional type was boolean but didn't receive boolean type")
+                }
+            case .Int:
+                if let val = Int(arg) {
+                    positional.value = val
+                } else {
+                    throw ParseError.InvalidArgument("Positional type was int but didn't receive int type")
+                }
+            case .String:
+                positional.value = arg
+            }
+            parsedPositionals += 1
+        }
         continue
       }
       
@@ -279,8 +350,10 @@ public class CommandLine {
     for opt in _options {
       flagWidth = max(flagWidth, "  \(opt.flagDescription):".characters.count)
     }
+    
+    let positionals = _positionals.flatMap { $0.metavar ?? $0.title }.joinWithSeparator(" ")
 
-    print("Usage: \(name) [options]", toStream: &to)
+    print("Usage: \(name) \(positionals) [options]", toStream: &to)
     for opt in _options {
       let flags = "  \(opt.flagDescription):".paddedToWidth(flagWidth)
       print("\(flags)\n      \(opt.helpMessage)", toStream: &to)

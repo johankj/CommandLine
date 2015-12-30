@@ -7,6 +7,8 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		04764B2D1C34071E00809BAF /* Positional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04764B2C1C34071E00809BAF /* Positional.swift */; };
+		04764B2E1C34072E00809BAF /* Positional.swift in Sources */ = {isa = PBXBuildFile; fileRef = 04764B2C1C34071E00809BAF /* Positional.swift */; };
 		5D06884F19674D7D00BBFAAC /* CommandLine.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 5D06884319674D7D00BBFAAC /* CommandLine.framework */; };
 		5D06885619674D7D00BBFAAC /* CommandLineTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D06885519674D7D00BBFAAC /* CommandLineTests.swift */; };
 		5D06886019674DA600BBFAAC /* CommandLine.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5D06885F19674DA600BBFAAC /* CommandLine.swift */; };
@@ -78,6 +80,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
+		04764B2C1C34071E00809BAF /* Positional.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Positional.swift; sourceTree = "<group>"; };
 		5D06884319674D7D00BBFAAC /* CommandLine.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = CommandLine.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5D06884719674D7D00BBFAAC /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		5D06884E19674D7D00BBFAAC /* CommandLineTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = CommandLineTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -133,10 +136,12 @@
 			children = (
 				5D06885F19674DA600BBFAAC /* CommandLine.swift */,
 				5D068866196A212A00BBFAAC /* Option.swift */,
+				04764B2C1C34071E00809BAF /* Positional.swift */,
 				5D449A17198B015E00F9A8A6 /* StringExtensions.swift */,
 				5D06884619674D7D00BBFAAC /* Supporting Files */,
 			);
-			path = CommandLine;
+			name = CommandLine;
+			path = Source/CommandLine;
 			sourceTree = "<group>";
 		};
 		5D06884619674D7D00BBFAAC /* Supporting Files */ = {
@@ -281,6 +286,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D449A18198B015E00F9A8A6 /* StringExtensions.swift in Sources */,
+				04764B2D1C34071E00809BAF /* Positional.swift in Sources */,
 				5D068867196A212A00BBFAAC /* Option.swift in Sources */,
 				5D06886019674DA600BBFAAC /* CommandLine.swift in Sources */,
 			);
@@ -291,6 +297,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				5D449B5C198B40B600F9A8A6 /* StringExtensions.swift in Sources */,
+				04764B2E1C34072E00809BAF /* Positional.swift in Sources */,
 				5D06885619674D7D00BBFAAC /* CommandLineTests.swift in Sources */,
 				5D068868196A212A00BBFAAC /* Option.swift in Sources */,
 				5D8DC809198D8BA0007CD61B /* StringExtensionTests.swift in Sources */,
