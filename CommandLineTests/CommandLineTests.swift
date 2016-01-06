@@ -24,7 +24,7 @@ import XCTest
 #endif
 
 internal class CommandLineTests: XCTestCase {
-  /* TODO: The commented-out tests segfault on Linux as of the Swift 2.2 2015-12-10 snapshot. */
+  /* TODO: The commented-out tests segfault on Linux as of the Swift 2.2 2015-12-31 snapshot. */
   var allTests : [(String, () -> ())] {
     return [
       ("testBoolOptions", testBoolOptions),
@@ -53,6 +53,7 @@ internal class CommandLineTests: XCTestCase {
       ("testPrintUsage", testPrintUsage),
       //("testPrintUsageError", testPrintUsageError),
       ("testPrintUsageToStderr", testPrintUsageToStderr),
+      //("testCustomOutputFormatter", testCustomOutputFormatter),
     ]
   }
 
@@ -543,7 +544,7 @@ internal class CommandLineTests: XCTestCase {
     }
   }
 
-  /* These two tests should assert() in cli.addOption, but there's no clean way to test for
+  /* These three tests should assert() in cli.addOption, but there's no clean way to test for
    * assertions in Swift 2, so they're commented out for now.
    */
 
@@ -562,6 +563,17 @@ internal class CommandLineTests: XCTestCase {
     let op2 = StringOption(shortFlag: "d", longFlag: "verbose", helpMessage: "")
     cli.addOptions(op1, op2)
     XCTFail("Added two options with the same long flag")
+  }
+
+  func testSetOptionFlagReuse() {
+    let cli = CommandLine()
+    let opts = [
+      BoolOption(shortFlag: "v", longFlag: "verbose", helpMessage: ""),
+      StringOption(shortFlag: "v", longFlag: "verify", helpMessage: "")
+    ]
+
+    cli.setOptions(opts)
+    XCTFail("Set options to an array with a reused flag")
   }
   */
 
@@ -785,5 +797,53 @@ internal class CommandLineTests: XCTestCase {
     /* Just make sure these doesn't crash or throw */
     cli.printUsage()
     cli.printUsage(error)
+  }
+
+  func testCustomOutputFormatter() {
+    let cli = CommandLine(arguments: [ "CommandLineTests" ])
+    cli.formatOutput = { s, type in
+      switch type {
+      case .About:
+        return "[ABOUT]\(s)\n"
+      case .Error:
+        return "[ERROR]\(s)\n"
+      case .OptionFlag:
+        return "[FLAG]\(s)\n"
+      case .OptionHelp:
+        return "[HELP]\(s)\n"
+      }
+    }
+
+    let boolOpt = BoolOption(shortFlag: "d", longFlag: "debug", helpMessage: "Enables debug mode.")
+    let counterOpt = CounterOption(shortFlag: "v", longFlag: "verbose",
+      helpMessage: "Enables verbose output. Specify multiple times for extra verbosity.")
+    let stringOpt = StringOption(shortFlag: "n", longFlag: "name", required: true,
+      helpMessage: "Name a Cy Young winner.")
+    let intOpt = IntOption(shortFlag: "f", longFlag: "favorite", required: true,
+      helpMessage: "Your favorite number.")
+    let doubleOpt = DoubleOption(shortFlag: "p", longFlag: "p-value", required: true,
+      helpMessage: "P-value for test.")
+    let extraOpt = MultiStringOption(shortFlag: "x", longFlag: "Extra", required: true,
+      helpMessage: "X is for Extra.")
+
+    let opts = [boolOpt, counterOpt, stringOpt, intOpt, doubleOpt, extraOpt]
+    cli.addOptions(opts)
+
+    do {
+      try cli.parse()
+      XCTFail("Parsed missing required option")
+    } catch {
+      var out = ""
+      cli.printUsage(error, to: &out)
+
+      let o = out.splitByCharacter("\n")
+      XCTAssertTrue(o[0].hasPrefix("[ERROR]"))
+      XCTAssertTrue(o[1].hasPrefix("[ABOUT]"))
+
+      for i in 2.stride(to: opts.count, by: 2) {
+        XCTAssertTrue(o[i].hasPrefix("[FLAG]"))
+        XCTAssertTrue(o[i + 1].hasPrefix("[HELP]"))
+      }
+    }
   }
 }

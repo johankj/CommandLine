@@ -91,7 +91,7 @@ internal extension String {
     var numSplits = 0
 
     var curIdx = self.startIndex
-    for i in self.startIndex..<self.endIndex {
+    for i in self.characters.indices {
       let c = self[i]
       if c == splitBy && (maxSplits == 0 || numSplits < maxSplits) {
         s.append(self[Range(start: curIdx, end: i)])
